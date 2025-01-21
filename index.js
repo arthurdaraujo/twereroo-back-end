@@ -5,7 +5,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const users = []
+const users = [
+  {
+    id: 1, 
+    username: "pinto",
+    avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info"
+  },
+  {
+    id: 2, 
+    username: "surupinto",
+    avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info"
+  },
+]
 const tweets = [
     {	
         username: "bobesponja",
@@ -126,6 +137,22 @@ app.get("/tweets", (req, res) => {
     }
 
     res.send(tweets)
+})
+
+app.post("/tweets", (req, res) => {
+    const {username, tweet} = req.body
+    const user = users.find(user => user.username === username)
+    
+    const newTweet = {
+        username,
+        avatar: user.avatar,
+        tweet
+    }
+
+    tweets.push(newTweet)
+
+    console.log(tweets)
+    res.send("ok")
 })
 
 app.listen(5000, () => console.log("server in port 5000"))
