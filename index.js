@@ -41,15 +41,15 @@ function isValidUrl(string) {
   
  
 app.post("/sign-up", (req, res) => {
-    const  {username, avatar}  = req.body
+    const  {username, avatar}  = req.body;
 
     if (!isValidUrl(avatar) || !username) {
-        res.status(400).send("Todos os campos são obrigatórios!")
+        res.status(400).send("Todos os campos são obrigatórios!");
         return
     }
 
     if(users.find(user => user.username === username)) {
-        res.status(409).send("conflict")
+        res.status(409).send("conflict");
         return
     }
 
@@ -65,14 +65,14 @@ app.post("/sign-up", (req, res) => {
 
 app.get("/tweets", (req, res) => {
    
-    console.log(typeof tweets.length)
+    //console.log(typeof tweets.length)
 
     if(tweets.length > 10) {
-        const lastTweets = tweets.length - 10
+        const lastTweets = tweets.length - 10;
 
-        const last10Tweets = tweets.filter((tweet, i) => i >= lastTweets )
-        console.log(last10Tweets)
-        res.send(last10Tweets)
+        const last10Tweets = tweets.filter((tweet, i) => i >= lastTweets );
+        console.log(last10Tweets);
+        res.send(last10Tweets);
         return
     }
 
@@ -80,8 +80,15 @@ app.get("/tweets", (req, res) => {
 })
 
 app.post("/tweets", (req, res) => {
-    const {username, tweet} = req.body
-    const user = users.find(user => user.username === username)
+    const {tweet} = req.body;
+    const username = req.headers.user;
+
+    if(!tweet || !username) {
+        res.status(400).send("Todos os campos são obrigatórios!");
+        return
+    }
+
+    const user = users.find(u => u.username === username);
     
     const newTweet = {
         username,
@@ -89,10 +96,10 @@ app.post("/tweets", (req, res) => {
         tweet
     }
 
-    tweets.push(newTweet)
+    tweets.push(newTweet);
 
-    console.log(tweets)
-    res.send("ok")
+    console.log(tweets);
+    res.sendStatus(201);
 })
 
-app.listen(5000, () => console.log("server in port 5000"))
+app.listen(5000, () => console.log("server in port 5000"));
