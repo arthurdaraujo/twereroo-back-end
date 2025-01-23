@@ -19,7 +19,7 @@ const users = [
 ]
 const tweets = [
     {	
-        username: "Miaujinho",
+        username: "miaujinho",
         avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info",
         tweet: "miau"
     },
@@ -37,7 +37,11 @@ function isValidUrl(string) {
     } catch (_) {
       return false;
     }
-  }
+}
+
+function regexToCutSpaces(str) {
+    return str.toLowerCase().replace(/\s+/g, "")
+}
   
  
 app.post("/sign-up", (req, res) => {
@@ -60,12 +64,26 @@ app.post("/sign-up", (req, res) => {
     })
 
     //console.log(users);
-    res.send(users);
+    res.status(201).send(users);
 })
 
 app.get("/tweets", (req, res) => {
    
-    //console.log(typeof tweets.length)
+   /*
+    const queryUsername = req.query.username;
+    
+    if (queryUsername) {
+        const tweetsFiltradosPorUsername = tweets.filter(t => regexToCutSpaces(t.username) == regexToCutSpaces(queryUsername));
+        console.log(tweetsFiltradosPorUsername)
+
+        if(tweetsFiltradosPorUsername.length ===0) {
+            res.sendStatus(404);
+            return
+        }
+
+        res.send(tweetsFiltradosPorUsername);
+    }
+    */
 
     if(tweets.length > 10) {
         const lastTweets = tweets.length - 10;
@@ -77,6 +95,21 @@ app.get("/tweets", (req, res) => {
     }
 
     res.send(tweets)
+})
+
+app.get("/tweets/:username", (req, res) => {
+
+    const paramUsername = req.params.username;
+    
+    const tweetsFiltradosPorUsername = tweets.filter(t => regexToCutSpaces(t.username) === regexToCutSpaces(paramUsername));
+    console.log(tweetsFiltradosPorUsername);
+
+    if(tweetsFiltradosPorUsername.length ===0) {
+        res.sendStatus(404);
+        return
+    }
+
+    res.send(tweetsFiltradosPorUsername);
 })
 
 app.post("/tweets", (req, res) => {
