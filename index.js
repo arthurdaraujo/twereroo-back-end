@@ -208,13 +208,12 @@ app.post("/sign-up", (req, res) => {
         avatar
     })
 
-    //console.log(users);
     res.status(201).send(users);
 })
 
 app.get("/tweets", (req, res) => {
    
-   
+    const tweetsReverse = [...tweets].reverse() 
     const page = req.query.page;
 
     if (page < 1) {
@@ -225,24 +224,20 @@ app.get("/tweets", (req, res) => {
     if(tweets.length > 10) {
 
         if(page && page > 1) {
-            const lastTweetsForPage = tweets.length - (page*10);
 
-            const tweetsFromPage = tweets.filter((tweet, i) => i >= lastTweetsForPage && i < (lastTweetsForPage+10))
+            const tweetsFromPage = tweetsReverse.filter((tweet, i) => i > page*10-10 && i <= page*10)
 
             if (tweetsFromPage.length === 0) {
                 res.sendStatus(404)
                 return
             }
-            
+
             res.send(tweetsFromPage)
             return
         }
-
-        const lastTweets = tweets.length - 10;
-
-        const last10Tweets = tweets.filter((tweet, i) => i >= lastTweets );
-        console.log(last10Tweets);
-        res.send(last10Tweets);
+        
+        const last10Tweets = tweetsReverse.filter((tweet, i) => i <= 10)
+        res.send(last10Tweets)
         return
     }
 
@@ -252,8 +247,9 @@ app.get("/tweets", (req, res) => {
 app.get("/tweets/:username", (req, res) => {
 
     const paramUsername = req.params.username;
+    const tweetsReverse = [...tweets].reverse() 
     
-    const tweetsFiltradosPorUsername = tweets.filter(t => regexToCutSpaces(t.username) === regexToCutSpaces(paramUsername));
+    const tweetsFiltradosPorUsername = tweetsReverse.filter(t => regexToCutSpaces(t.username) === regexToCutSpaces(paramUsername));
     console.log(tweetsFiltradosPorUsername);
 
     if(tweetsFiltradosPorUsername.length ===0) {
